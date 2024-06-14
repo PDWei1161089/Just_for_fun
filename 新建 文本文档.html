@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽奖小程序</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+ 
+        #result {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+ 
+        #drawButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+ 
+        #prizeInfo {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <!-- 显示奖品信息 -->
+        <div id="prizeInfo">奖品信息写在这里</div>
+        
+        <!-- 显示抽奖结果 -->
+        <div id="result"></div>
+        
+        <!-- 抽奖按钮 -->
+        <button id="drawButton" onclick="drawWinner()">抽奖</button>
+    </div>
+ 
+    <script>
+        // 设定抽奖次数
+        var totalDraws = 10;
+        
+        // 记录已经抽奖的次数
+        var drawCount = 0;   
+        
+        // 普通奖品的概率
+        var normalProbabilities = [5, 3, 1, 5, 4];
+        
+        // 神秘奖品的概率
+        var mysteryProbability = 1;  
+        
+        // 普通奖品的名称
+        var normalPrizes = [
+            "一个ipad 10",
+            "一个apple15 pro max",
+            "一袋吸吸冰",
+            "一盒巧克力豆",
+            "一个手机壳"
+        ];
+        
+        // 神秘奖品的名称
+        var mysteryPrize = "一个神秘奖品";
+ 
+        // 抽奖函数
+        function drawWinner() {
+            var resultElement = document.getElementById("result");
+            var drawButton = document.getElementById("drawButton");
+ 
+            // 检查是否还有抽奖机会
+            if (drawCount < totalDraws) {
+                var randomNum = Math.random() * 100;
+                var cumulativeProbability = 0;
+                var winnerIndex = -1;
+ 
+                // 合并概率数组
+                var combinedProbabilities = normalProbabilities.concat([mysteryProbability]);
+ 
+                // 根据概率数组确定获奖等级
+                for (var i = 0; i < combinedProbabilities.length; i++) {
+                    cumulativeProbability += combinedProbabilities[i];
+ 
+                    if (randomNum <= cumulativeProbability) {
+                        winnerIndex = i;
+                        break;
+                    }
+                }
+ 
+                // 显示获奖等级和奖品
+                if (winnerIndex !== -1) {
+                    var winnerLevel = (winnerIndex === combinedProbabilities.length - 1) ? mysteryPrize : normalPrizes[winnerIndex];
+                    resultElement.textContent = "恭喜您获得" + winnerLevel + "！";
+ 
+                    // 抽奖次数加一
+                    drawCount++;
+                } else {
+                    resultElement.textContent = "参与奖。";
+                }
+ 
+                // 更新抽奖按钮的文本
+                drawButton.textContent = "抽奖次数剩余：" + (totalDraws - drawCount);
+            } else {
+                // 抽奖次数已经用完
+                resultElement.textContent = "已经抽完所有次数！";
+                drawButton.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
